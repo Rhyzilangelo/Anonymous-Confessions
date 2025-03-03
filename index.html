@@ -1,0 +1,107 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Anonymous Confessions</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 font-roboto min-h-screen flex flex-col justify-center items-center">
+    <div class="container mx-auto p-4">
+        <header class="text-center mb-8">
+            <h1 class="text-5xl font-bold text-white">Anonymous Confessions</h1>
+            <p class="text-gray-200 mt-2">Share your unsaid thoughts and feelings anonymously</p>
+        </header>
+
+        <main class="w-full max-w-lg">
+            <div class="bg-white p-6 rounded-lg shadow-lg mb-8">
+                <h2 class="text-3xl font-bold mb-4 text-gray-800">Submit Your Confession</h2>
+                <form id="confessionForm" class="space-y-4">
+                    <div>
+                        <label for="confession" class="block text-gray-700">Your Confession</label>
+                        <textarea id="confession" class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" rows="4" placeholder="Write your confession here..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-pink-500 text-white py-3 rounded-lg hover:bg-pink-600 transition duration-300">Submit</button>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-lg shadow-lg">
+                <h2 class="text-3xl font-bold mb-4 text-gray-800">Recent Confessions</h2>
+                <div id="confessionsList" class="space-y-4">
+                    <!-- Confessions will be dynamically added here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer class="text-center mt-8 text-gray-200">
+        <p>&copy; 2023 Anonymous Confessions. All rights reserved.</p>
+    </footer>
+
+    <script>
+        document.getElementById('confessionForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const confessionText = document.getElementById('confession').value;
+            if (confessionText.trim() !== "") {
+                const confessionElement = document.createElement('div');
+                confessionElement.className = 'bg-gray-100 p-4 rounded-lg shadow-sm relative';
+                
+                const confessionTextElement = document.createElement('p');
+                confessionTextElement.innerText = confessionText;
+                confessionElement.appendChild(confessionTextElement);
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'absolute top-2 right-2 text-red-500 hover:text-red-700';
+                deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
+                deleteButton.addEventListener('click', function() {
+                    confessionElement.remove();
+                });
+                confessionElement.appendChild(deleteButton);
+
+                const commentForm = document.createElement('form');
+                commentForm.className = 'mt-4 space-y-2';
+                commentForm.innerHTML = `
+                    <textarea class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" rows="2" placeholder="Write a comment..."></textarea>
+                    <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition duration-300">Comment</button>
+                `;
+                commentForm.addEventListener('submit', function(event) {
+                    event.preventDefault();
+                    const commentText = commentForm.querySelector('textarea').value;
+                    if (commentText.trim() !== "") {
+                        const commentElement = document.createElement('div');
+                        commentElement.className = 'bg-gray-200 p-2 rounded-lg mt-2';
+                        commentElement.innerText = commentText;
+
+                        const replyForm = document.createElement('form');
+                        replyForm.className = 'mt-2 space-y-2';
+                        replyForm.innerHTML = `
+                            <textarea class="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500" rows="2" placeholder="Write a reply..."></textarea>
+                            <button type="submit" class="w-full bg-green-500 text-white py-2 rounded-lg hover:bg-green-600 transition duration-300">Reply</button>
+                        `;
+                        replyForm.addEventListener('submit', function(event) {
+                            event.preventDefault();
+                            const replyText = replyForm.querySelector('textarea').value;
+                            if (replyText.trim() !== "") {
+                                const replyElement = document.createElement('div');
+                                replyElement.className = 'bg-gray-300 p-2 rounded-lg mt-2';
+                                replyElement.innerText = replyText;
+                                commentElement.appendChild(replyElement);
+                                replyForm.querySelector('textarea').value = '';
+                            }
+                        });
+
+                        commentElement.appendChild(replyForm);
+                        confessionElement.appendChild(commentElement);
+                        commentForm.querySelector('textarea').value = '';
+                    }
+                });
+                confessionElement.appendChild(commentForm);
+
+                document.getElementById('confessionsList').prepend(confessionElement);
+                document.getElementById('confession').value = '';
+            }
+        });
+    </script>
+</body>
+</html>
